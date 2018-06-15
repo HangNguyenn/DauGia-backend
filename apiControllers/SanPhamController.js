@@ -22,9 +22,10 @@ var cn = new sequelize('dau_gia', 'root', '1234567890', {
 
 
 router.get('/loadall', (req, res) => {
-    cn.query('SELECT sp.*, nd1.HoTen as TenNguoiDang, nd2.HoTen as TenNguoiGiuGia, dm.TenDM, ha.HinhAnh1 FROM sanpham sp, nguoidung nd1, nguoidung nd2, danhmuc dm, hinhanh ha WHERE sp.MaNguoiDang = nd1.MaTK and sp.NguoiDangGiuGia = nd2.MaTK and sp.DanhMuc = dm.MaDM and sp.MaSP = ha.MaSP', { raw: true })
+    cn.query('SELECT sp.*, nd1.HoTen as TenNguoiDang, nd2.HoTen as TenNguoiGiuGia, ha.HinhAnh1 FROM sanpham sp LEFT JOIN nguoidung nd2 on sp.NguoiDangGiuGia = nd2.MaTK, nguoidung nd1, hinhanh ha where sp.MaNguoiDang = nd1.MaTK and sp.MaSP = ha.maSP', { raw: true })
         .then(rows => {
-            res.status(200).json(rows);
+            console.log(rows[0])
+            res.status(200).json(rows[0]);
             return;
         })
         .catch(err => {
@@ -33,9 +34,9 @@ router.get('/loadall', (req, res) => {
         })
 });
 router.get('/top5LuotRaGia', (req, res) => {
-    cn.query('SELECT sp.*, nd1.HoTen as TenNguoiDang, nd2.HoTen as TenNguoiGiuGia, dm.TenDM, ha.HinhAnh1 FROM sanpham sp, nguoidung nd1, nguoidung nd2, danhmuc dm, hinhanh ha WHERE sp.MaNguoiDang = nd1.MaTK and sp.NguoiDangGiuGia = nd2.MaTK and sp.DanhMuc = dm.MaDM and sp.MaSP = ha.MaSP', { raw: true })
+    cn.query('SELECT sp.*, nd1.HoTen as TenNguoiDang, nd2.HoTen as TenNguoiGiuGia, ha.HinhAnh1 FROM sanpham sp LEFT JOIN nguoidung nd2 on sp.NguoiDangGiuGia = nd2.MaTK, nguoidung nd1, hinhanh ha where sp.MaNguoiDang = nd1.MaTK and sp.MaSP = ha.maSP order by sp.SoLuotRaGia DESC', { raw: true, limit: 5 })
         .then(rows => {
-            res.status(200).json(rows);
+            res.status(200).json(rows[0]);
             return;
         })
         .catch(err => {
@@ -43,8 +44,28 @@ router.get('/top5LuotRaGia', (req, res) => {
             return;
         })
 });
-
-
+router.get('/top5SPGiaCaoNhat', (req, res) => {
+    cn.query('SELECT sp.*, nd1.HoTen as TenNguoiDang, nd2.HoTen as TenNguoiGiuGia, ha.HinhAnh1 FROM sanpham sp LEFT JOIN nguoidung nd2 on sp.NguoiDangGiuGia = nd2.MaTK, nguoidung nd1, hinhanh ha where sp.MaNguoiDang = nd1.MaTK and sp.MaSP = ha.maSP order by sp.GiaHienTai DESC', { raw: true, limit: 5 })
+        .then(rows => {
+            res.status(200).json(rows[0]);
+            return;
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Internal error" });
+            return;
+        })
+});
+router.get('/top5SPGanKetThuc', (req, res) => {
+    cn.query('SELECT sp.*, nd1.HoTen as TenNguoiDang, nd2.HoTen as TenNguoiGiuGia, ha.HinhAnh1 FROM sanpham sp LEFT JOIN nguoidung nd2 on sp.NguoiDangGiuGia = nd2.MaTK, nguoidung nd1, hinhanh ha where sp.MaNguoiDang = nd1.MaTK and sp.MaSP = ha.maSP order by (sp.ThoiGianKetThuc - sp.ThoiGianDang) ASC', { raw: true, limit: 5 })
+        .then(rows => {
+            res.status(200).json(rows[0]);
+            return;
+        })
+        .catch(err => {
+            res.status(500).json({ message: "Internal error" });
+            return;
+        })
+});
 module.exports = router;
 
 

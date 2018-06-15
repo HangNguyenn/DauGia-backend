@@ -30,12 +30,12 @@ module.exports = function (sequelize, DataTypes) {
         GiaMuaNgay: {
             type: DataTypes.DOUBLE,
             allowNull: true,
-            defaultValue: 0
+            defaultValue: null
         },
         NguoiDangGiuGia: {
             type: DataTypes.INTEGER(11).UNSIGNED,
-            allowNull: false,
-            defaultValue: 0
+            allowNull: true,
+            defaultValue: null
         },
         ThoiGianDang: {
             type: DataTypes.DATE,
